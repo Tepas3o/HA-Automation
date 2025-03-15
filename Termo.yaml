@@ -196,7 +196,7 @@ trigger_variables:
 
   delay_map:
     99: 0
-    98: 5
+    98: 1
     97: 10
     96: 15
     94: 20
@@ -288,13 +288,14 @@ action:
                           - action: switch.turn_on
                             target:
                               entity_id: !input start_button
+
                   - wait_for_trigger:
                       - platform: state
                         entity_id: !input trigger_input_boolean
                         to: "off"
                     timeout: "00:00:30"
                     continue_on_timeout: true
-                    
+
                   - choose:
                       - conditions:
                           - condition: template
@@ -384,6 +385,81 @@ action:
 
       - conditions:
           - condition: trigger
+            id: timer_started
+        sequence:
+          - repeat:
+              until:
+                - condition: trigger
+                  id: timer_finished
+                - condition: state
+                  entity_id: !input trigger_input_boolean
+                  state: "off"
+              sequence:
+                - wait_for_trigger:
+                    - platform: state
+                      entity_id: !input trigger_input_boolean
+                      to: "off"
+                    - platform: event
+                      event_type: timer.finished
+                      event_data:
+                        entity_id: !input timer_entity
+                  timeout: >
+                    {% set delay_minutes = delay_map[min_temperature] %}
+                    0:{{ '%02d' | format(delay_minutes) }}:00
+                  continue_on_timeout: true
+
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: >
+                            {{ '.' in (start_button) and start_button.split('.')[0] == 'button' }}
+                      sequence:
+                        - action: button.press
+                          target:
+                            entity_id: !input start_button
+
+                    - conditions:
+                        - condition: template
+                          value_template: >
+                            {{ '.' in (start_button) and start_button.split('.')[0] == 'switch' }}
+                      sequence:
+                        - action: switch.turn_on
+                          target:
+                            entity_id: !input start_button
+
+                - wait_for_trigger:
+                    - platform: state
+                      entity_id: !input trigger_input_boolean
+                      to: "off"
+                    - platform: event
+                      event_type: timer.finished
+                      event_data:
+                        entity_id: !input timer_entity
+                  timeout: "00:00:20"
+                  continue_on_timeout: true
+
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: >
+                            {{ '.' in (start_button) and start_button.split('.')[0] == 'button' }}
+                      sequence:
+                        - action: button.press
+                          target:
+                            entity_id: !input start_button
+
+                    - conditions:
+                        - condition: template
+                          value_template: >
+                            {{ '.' in (start_button) and start_button.split('.')[0] == 'switch' }}
+                      sequence:
+                        - action: switch.turn_off
+                          target:
+                            entity_id: !input start_button
+
+
+      - conditions:
+          - condition: trigger
             id: timer_finished
         sequence:
           - choose:
@@ -405,7 +481,12 @@ action:
                     target:
                       entity_id: !input start_button
 
-          - delay: "{{ on_duration }}"
+          - wait_for_trigger:
+              - platform: state
+                entity_id: !input trigger_input_boolean
+                to: "off"
+            timeout: "{{ on_duration }}"
+            continue_on_timeout: true
 
           - choose:
               - conditions:
