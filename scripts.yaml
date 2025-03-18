@@ -1,0 +1,81 @@
+timer_started_repeat:
+  alias: "Script: Timer Started Repeat"
+  mode: restart
+  fields:
+    trigger_input_boolean:
+      description: "Entidad input_boolean que detecta la petición diferida"
+    timer_entity:
+      description: "Entidad del timer usado para iniciar la carga"
+    start_button:
+      description: "Entidad del botón o switch que inicia la carga"
+    min_temperature:
+      description: "Temperatura mínima"
+    delay_map:
+      description: "Mapa de retardos indexado por temperatura"
+
+  sequence:
+    - repeat:
+        until:
+          # En lugar de condition: state => condition: template
+          - condition: template
+            value_template: "{{ is_state(trigger_input_boolean, 'off') }}"
+          - condition: template
+            value_template: "{{ is_state(timer_entity, 'idle') }}"
+        sequence:
+          - wait_for_trigger:
+              - platform: template
+                value_template: "{{ is_state(trigger_input_boolean, 'off') }}"
+              - platform: event
+                event_type: timer.finished
+                event_data:
+                  entity_id: "{{ timer_entity }}"
+            timeout: >
+              {% set delay_minutes = delay_map[min_temperature] %}
+              0:{{ '%02d' | format(delay_minutes) }}:00
+            continue_on_timeout: true
+
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {{ '.' in start_button and start_button.split('.')[0] == 'button' }}
+                sequence:
+                  - service: button.press
+                    data:
+                      entity_id: "{{ start_button }}"
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {{ '.' in start_button and start_button.split('.')[0] == 'switch' }}
+                sequence:
+                  - service: switch.turn_on
+                    data:
+                      entity_id: "{{ start_button }}"
+
+          - wait_for_trigger:
+              - platform: template
+                value_template: "{{ is_state(trigger_input_boolean, 'off') }}"
+              - platform: event
+                event_type: timer.finished
+                event_data:
+                  entity_id: "{{ timer_entity }}"
+            timeout: "00:00:20"
+            continue_on_timeout: true
+
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {{ '.' in start_button and start_button.split('.')[0] == 'button' }}
+                sequence:
+                  - service: button.press
+                    data:
+                      entity_id: "{{ start_button }}"
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {{ '.' in start_button and start_button.split('.')[0] == 'switch' }}
+                sequence:
+                  - service: switch.turn_off
+                    data:
+                      entity_id: "{{ start_button }}"

@@ -1,5 +1,5 @@
 Algoritmo GildaDeferredPlugRequestAutomation
-	// Definición de variables de entrada
+	// Definiciï¿½n de variables de entrada
 	Definir load Como Real
 	Definir co2_cost Como Real
 	Definir kwh_cost Como Real
@@ -8,7 +8,7 @@ Algoritmo GildaDeferredPlugRequestAutomation
 	Definir sample_frequency Como Cadena
 	Definir start_button Como Cadena
 	Definir min_temperature Como Entero
-	Definir initial_boil Como Lógico
+	Definir initial_boil Como Lï¿½gico
 	Definir trigger_input_boolean Como Cadena
 	Definir timer_entity Como Cadena
 	Definir co2_intensity_entity Como Cadena
@@ -21,7 +21,7 @@ Algoritmo GildaDeferredPlugRequestAutomation
 	Definir sql_database Como Cadena
 	Definir sql_port Como Entero
 	Definir trigger_id Como Cadena
-	Definir resultado Como Lógico
+	Definir resultado Como Lï¿½gico
 	Definir partes Como Cadena
 	// Inicializar variables con valores de ejemplo
 	load <- 1000.0
@@ -46,14 +46,14 @@ Algoritmo GildaDeferredPlugRequestAutomation
 	sql_port <- 3306
 	// Simular un trigger
 	trigger_id <- 'deferred_start'
-	// Manejar el trigger según su tipo
+	// Manejar el trigger segï¿½n su tipo
 	Escribir 'Procesando trigger: ', trigger_id
-	Según trigger_id Hacer
+	Segun trigger_id Hacer
 		'deferred_start':
 			Si initial_boil Entonces
 				// Verificar tipo de start_button y activarlo
 				Si Subcadena(start_button,0,6)='button.' Entonces
-					Escribir 'Presionando botón: ', start_button
+					Escribir 'Presionando botï¿½n: ', start_button
 				SiNo
 					Si Subcadena(start_button,0,6)='switch.' Entonces
 						Escribir 'Encendiendo switch: ', start_button
@@ -63,15 +63,15 @@ Algoritmo GildaDeferredPlugRequestAutomation
 				Escribir 'Esperando 30 segundos o hasta que ', trigger_input_boolean, ' cambie a off'
 				// Apagar el start_button
 				Si Subcadena(start_button,0,6)='button.' Entonces
-					Escribir 'Presionando botón: ', start_button
+					Escribir 'Presionando botï¿½n: ', start_button
 				SiNo
 					Si Subcadena(start_button,0,6)='switch.' Entonces
 						Escribir 'Apagando switch: ', start_button
 					FinSi
 				FinSi
 			FinSi
-			// Llamar a la función de Gilda para programar la carga diferida
-			Escribir 'Llamando a Gilda para programar carga diferida con parámetros:'
+			// Llamar a la funciï¿½n de Gilda para programar la carga diferida
+			Escribir 'Llamando a Gilda para programar carga diferida con parï¿½metros:'
 			Escribir '  - load: ', load/1000.0
 			Escribir '  - on_duration: ', on_duration
 			Escribir '  - time_horizon: ', time_horizon
@@ -82,17 +82,17 @@ Algoritmo GildaDeferredPlugRequestAutomation
 			// Cancelar el timer
 			Escribir 'Cancelando timer: ', timer_entity
 			Si Subcadena(start_button,0,6)='button.' Entonces
-				Escribir 'Presionando botón: ', start_button
+				Escribir 'Presionando botï¿½n: ', start_button
 				// Apagar el start_button
 			SiNo
 				Si Subcadena(start_button,0,6)='switch.' Entonces
 					Escribir 'Apagando switch: ', start_button
 				FinSi
 			FinSi
-		'ti‰‰‰mer_finished':
+		'timer_finished':
 			// Activar el start_button
 			Si Subcadena(start_button,0,6)='button.' Entonces
-				Escribir 'Presionando botón: ', start_button
+				Escribir 'Presionando botï¿½n: ', start_button
 			SiNo
 				Si Subcadena(start_button,0,6)='switch.' Entonces
 					Escribir 'Encendiendo switch: ', start_button
@@ -102,7 +102,7 @@ Algoritmo GildaDeferredPlugRequestAutomation
 			Escribir 'Esperando: ', on_duration
 			// Apagar el start_button
 			Si Subcadena(start_button,0,6)='button.' Entonces
-				Escribir 'Presionando botón: ', start_button
+				Escribir 'Presionando botï¿½n: ', start_button
 			SiNo
 				Si Subcadena(start_button,0,6)='switch.' Entonces
 					Escribir 'Apagando switch: ', start_button
@@ -111,8 +111,8 @@ Algoritmo GildaDeferredPlugRequestAutomation
 			// Apagar el input_boolean
 			Escribir 'Apagando input_boolean: ', trigger_input_boolean
 		'timer_started':
-			// No hay acciones específicas para este trigger
-			Escribir 'Timer iniciado, no se requieren acciones específicas'
-	FinSegún
+			// No hay acciones especï¿½ficas para este trigger
+			Escribir 'Timer iniciado, no se requieren acciones especï¿½ficas'
+	FinSegun
 	Escribir 'Fin del procesamiento del trigger'
 FinAlgoritmo
