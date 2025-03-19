@@ -334,6 +334,7 @@ action:
                       sql_database: !input sql_database
                       sql_port: !input sql_port
 
+
               - conditions:
                   - condition: template
                     value_template: "{{ not initial_boil }}"
@@ -386,6 +387,8 @@ action:
       - conditions:
           - condition: trigger
             id: timer_started
+          - condition: template
+            value_template: "{{ trigger.event.event_type != 'timer.finished' }}"
         sequence:
           - service: script.timer_started_repeat
             data:
@@ -486,4 +489,4 @@ action:
             target:
               entity_id: !input trigger_input_boolean
 
-mode: single
+mode: parallel
