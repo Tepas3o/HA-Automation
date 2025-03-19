@@ -1,8 +1,8 @@
 blueprint:
-  name: Gilda Deferred Plug Request Automation
-  description: Determines the optimal time to turn on a smart plug
+  name: Gilda Thermo Automation
+  description: Optimizes water heater operation by scheduling smart plug activation based on energy costs and CO2 intensity
   domain: automation
-  author: Sebastián Terrazas
+  author: Luis Vera
 
   input:
     deferred_load_section:
