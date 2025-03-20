@@ -388,7 +388,8 @@ action:
           - condition: trigger
             id: timer_started
           - condition: template
-            value_template: "{{ trigger.event.event_type != 'timer.finished' }}"
+            value_template: >
+              {{ trigger.event.event_type == 'timer.started' and states(timer_entity) != '00:00:00' }}
         sequence:
           - service: script.timer_started_repeat
             data:
