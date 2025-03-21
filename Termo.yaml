@@ -344,57 +344,7 @@ action:
                     target:
                       entity_id: !input start_button
 
-      - conditions:
-          - condition: template
-            value_template: "{{ trigger.id != 'timer_finished' }}"
-          - condition: trigger
-            id: timer_started
-        sequence:
-          - service: script.timer_started_repeat
-            data:
-              trigger_input_boolean: !input trigger_input_boolean
-              timer_entity: !input timer_entity
-              start_button: !input start_button
-              min_temperature: !input min_temperature
-              delay_map:
-                99: 0
-                98: 1
-                97: 10
-                96: 15
-                94: 20
-                93: 25
-                92: 30
-                90: 40
-                89: 45
-                88: 50
-                87: 60
-                86: 65
-                85: 70
-                84: 75
-                83: 80
-                82: 85
-                81: 90
-                80: 95
-                79: 100
-                78: 105
-                77: 110
-                76: 120
-                75: 125
-                74: 130
-                73: 140
-                72: 145
-                71: 155
-                70: 160
-                69: 170
-                68: 175
-                67: 185
-                66: 195
-                65: 205
-                64: 215
-                63: 225
-                62: 235
-                61: 245
-                60: 260
+
 
       - conditions:
           - condition: trigger
@@ -449,4 +399,55 @@ action:
             target:
               entity_id: !input trigger_input_boolean
 
-mode: parallel
+      - conditions:
+          - condition: trigger
+            id: timer_started
+        sequence:
+          - service: script.timer_started_repeat
+            data:
+              trigger_input_boolean: !input trigger_input_boolean
+              timer_entity: !input timer_entity
+              start_button: !input start_button
+              min_temperature: !input min_temperature
+              delay_map:
+                99: 0
+                98: 1
+                97: 10
+                96: 15
+                94: 20
+                93: 25
+                92: 30
+                90: 40
+                89: 45
+                88: 50
+                87: 60
+                86: 65
+                85: 70
+                84: 75
+                83: 80
+                82: 85
+                81: 90
+                80: 95
+                79: 100
+                78: 105
+                77: 110
+                76: 120
+                75: 125
+                74: 130
+                73: 140
+                72: 145
+                71: 155
+                70: 160
+                69: 170
+                68: 175
+                67: 185
+                66: 195
+                65: 205
+                64: 215
+                63: 225
+                62: 235
+                61: 245
+                60: 260
+
+
+mode: queued
