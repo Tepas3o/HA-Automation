@@ -6,12 +6,12 @@ blueprint:
 
   input:
     deferred_load_section:
-      name: Deferred Load Section
-      description: Deferred Load Parameters
+      name: Water heater parameters
+      description: Parameters for optimizing water heater operation
       input:
         load:
-          name: Intensity
-          description: Deferred intensity [W]
+          name: Water heater power
+          description: Power consumption of your electric water heater [W]
           default: 1000.0
           selector:
             number:
@@ -21,22 +21,22 @@ blueprint:
               unit_of_measurement: "W"
 
         on_duration:
-          name: On Duration
-          description: Duration the plug should stay on once activated
+          name: Heating duration
+          description: Duration the water heater should stay on once activated
           default:
             hours: 1
           selector:
             duration:
 
         initial_boil:
-          name: Initial Boil
-          description: Activate an initial 35-minute boil when starting the automation.
+          name: Initial heat
+          description: Activate an initial heat cycle when starting the automation 
           default: false
           selector:
             boolean:
 
         min_temperature:
-          name: Minimum Temperature
+          name: Minimum water temperature
           description: Minimum temperature that the water heater can reach before the smart relay is activated.
           default: 80
           selector:
@@ -109,16 +109,16 @@ blueprint:
       description: Allow to monitor and control the entity
       input:
         trigger_input_boolean:
-          name: Deferred Start Switch
-          description: This switch detects a deferred start request
+          name: Water heater automation switch
+          description: Switch to enable/disable the smart water heater optimization
           selector:
             entity:
               filter:
                 - domain: input_boolean
 
         start_button:
-          name: Deferred Start Button
-          description: This button actually start the deferred load
+          name: Water heater control
+          description: Switch or button that physically controls the water heater
           selector:
             entity:
               filter:
@@ -193,46 +193,6 @@ trigger_variables:
   start_button: !input start_button
   min_temperature: !input min_temperature
   initial_boil: !input initial_boil
-
-  delay_map:
-    99: 0
-    98: 1
-    97: 10
-    96: 15
-    94: 20
-    93: 25
-    92: 30
-    90: 40
-    89: 45
-    88: 50
-    87: 60
-    86: 65
-    85: 70
-    84: 75
-    83: 80
-    82: 85
-    81: 90
-    80: 95
-    79: 100
-    78: 105
-    77: 110
-    76: 120
-    75: 125
-    74: 130
-    73: 140
-    72: 145
-    71: 155
-    70: 160
-    69: 170
-    68: 175
-    67: 185
-    66: 195
-    65: 205
-    64: 215
-    63: 225
-    62: 235
-    61: 245
-    60: 260
 
 trigger:
   - trigger: state
@@ -385,11 +345,10 @@ action:
                       entity_id: !input start_button
 
       - conditions:
+          - condition: template
+            value_template: "{{ trigger.id != 'timer_finished' }}"
           - condition: trigger
             id: timer_started
-          - condition: template
-            value_template: >
-              {{ trigger.event.event_type == 'timer.started' and states(timer_entity) != '00:00:00' }}
         sequence:
           - service: script.timer_started_repeat
             data:
