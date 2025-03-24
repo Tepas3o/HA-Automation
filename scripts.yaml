@@ -14,13 +14,15 @@ timer_started_repeat:
       description: "Mapa de retardos indexado por temperatura"
 
   sequence:
+    - condition: template
+      value_template: >
+        {{ is_state(trigger_input_boolean, 'on') and not is_state(timer_entity, 'idle') }}
     - repeat:
         until:
           # En lugar de condition: state => condition: template
           - condition: template
-            value_template: "{{ is_state(trigger_input_boolean, 'off') }}"
-          - condition: template
-            value_template: "{{ is_state(timer_entity, 'idle') }}"
+            value_template: >
+              {{ is_state(trigger_input_boolean, 'off') or is_state(timer_entity, 'idle') }}
         sequence:
           - wait_for_trigger:
               - platform: template
